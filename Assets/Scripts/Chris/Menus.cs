@@ -8,6 +8,10 @@ public class Menus : MonoBehaviour
 	public int LevelPage = 1;
 	public int LevelsPerPage = 9;
 
+	public int ButtonsPerRow = 3;
+
+	private int NumberOfLevelPages;
+
 	private delegate void GUIMethod();
 	private GUIMethod currentGUIMethod;
 
@@ -15,19 +19,21 @@ public class Menus : MonoBehaviour
 	void Start ()
 	{
 		currentGUIMethod = MainMenuGUIMethod;
+
+		NumberOfLevelPages = Mathf.FloorToInt(NumberOfLevels/LevelsPerPage);
 	}
 
 	void MainMenuGUIMethod()
 	{
-		if(GUI.Button (new Rect(10, Screen.height * 0.1f, Screen.width - 20, Screen.height * 0.2f), "Play"))
+		if(GUI.Button (new Rect(Screen.width * 0.1f, Screen.height * 0.1f, Screen.width * 0.8f, Screen.height * 0.2f), "Play"))
 		{
 			Application.LoadLevel ("Level1");
 		}
-		else if(GUI.Button (new Rect(10, Screen.height * 0.4f, Screen.width - 20, Screen.height * 0.2f), "Level Select"))
+		else if(GUI.Button (new Rect(Screen.width * 0.1f, Screen.height * 0.4f, Screen.width * 0.8f, Screen.height * 0.2f), "Level Select"))
 		{
 			currentGUIMethod = LevelSelectGUIMethod;
 		}
-		else if(GUI.Button (new Rect(10, Screen.height * 0.7f, Screen.width - 20, Screen.height * 0.2f), "Quit"))
+		else if(GUI.Button (new Rect(Screen.width * 0.1f, Screen.height * 0.7f, Screen.width * 0.8f, Screen.height * 0.2f), "Quit"))
 		{
 			Application.Quit ();
 		}
@@ -35,15 +41,37 @@ public class Menus : MonoBehaviour
 
 	void LevelSelectGUIMethod()
 	{
-		for(int i = 1; i <= 3; i++)
+		float LeftPosition = 0.2f;
+		float TopPosition = 0.2f;
+
+		for(int i = 0; i < LevelsPerPage; i++)
 		{
-			for(int j = 1; j <= 3; j++)
+			int level = (i + 1) + ((LevelPage - 1) * LevelsPerPage);
+			if(GUI.Button(new Rect(Screen.width * (LeftPosition * ((i % ButtonsPerRow) + 1)), Screen.height * TopPosition, Screen.width * 0.2f, Screen.height * 0.2f), level.ToString()))
 			{
-				if(GUI.Button (new Rect(Screen.width * (i * 0.2f), Screen.height * (j * 0.2f), Screen.width * 0.2f, Screen.height * 0.2f), 
-				               "Level " + (((LevelPage - 1) * LevelsPerPage) + (i * j))))
-				{
-					Debug.Log (((LevelPage - 1) * LevelsPerPage) + (i * j).ToString());
-				}
+//				Debug.Log (level.ToString());
+				Application.LoadLevel ("Level" + level);
+			}
+
+			if((i+1) % 3 == 0)
+			{
+				TopPosition += 0.2f;
+			}
+		}
+
+		if(LevelPage > 1)
+		{
+			if(GUI.Button (new Rect(Screen.width * 0.1f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.1f), "<"))
+			{
+				LevelPage--;
+			}
+		}
+		
+		if(LevelPage < NumberOfLevelPages)
+		{
+			if(GUI.Button (new Rect(Screen.width * 0.8f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.1f), ">"))
+			{
+				LevelPage++;
 			}
 		}
 	}
