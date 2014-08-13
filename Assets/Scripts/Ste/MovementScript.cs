@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MovementScript : MonoBehaviour {
+public class MovementScript : MonoBehaviour 
+{
 
 	public Vector2 topVel;
 	private Vector2 velocity;
@@ -35,10 +36,8 @@ public class MovementScript : MonoBehaviour {
         else
         {
             targetVel = new Vector2(0.0f, this.rigidbody2D.velocity.y);
-            this.rigidbody2D.velocity = Vector2.Lerp(this.rigidbody2D.velocity, targetVel, 10 * Time.deltaTime);
+            this.rigidbody2D.velocity = Vector2.Lerp(this.rigidbody2D.velocity, targetVel, 2 * Time.deltaTime);
         }
-
-
     }
 
 	void UpdateInputs()
@@ -47,9 +46,10 @@ public class MovementScript : MonoBehaviour {
         //MoveRight
         if (Input.GetKey(KeyCode.D))
         {
+            
             if (velocity.x < topVel.x)
             {
-                velocity.x += 2 * Time.deltaTime;
+                velocity.x += 10 * Time.deltaTime;
                 speedUp = true;
                 if (velocity.x > topVel.x)
                 {
@@ -62,7 +62,7 @@ public class MovementScript : MonoBehaviour {
         {
             if (velocity.x > -topVel.x)
             {
-                velocity.x -= 2 * Time.deltaTime;
+                velocity.x -= 10 * Time.deltaTime;
                 speedUp = true;
                 if (velocity.x < -topVel.x)
                 {

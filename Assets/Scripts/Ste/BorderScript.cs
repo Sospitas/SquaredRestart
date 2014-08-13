@@ -5,10 +5,10 @@ using UnityEngineInternal;
 public class BorderScript : MonoBehaviour 
 {
     public GameObject LeftBorder, RightBorder, TopBorder, BottomBorder;
-    private float offsetValue = 2.0f;  
+    private float offsetValue = 0.5f;  
     //When an object enters the border it will be moved to the other side of the screen
     //respectively.
-    void OnTriggerEnter(Collider col)
+    void OnTriggerEnter2D(Collider2D col)
     {
         if(col.tag == "Player")
         {
