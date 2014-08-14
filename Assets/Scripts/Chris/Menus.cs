@@ -103,7 +103,7 @@ public class Menus : MonoBehaviour
 
 		if(LevelPage > 1)
 		{
-			if(GUI.Button (new Rect(Screen.width * 0.1f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.1f), "<"))
+			if(GUI.Button (new Rect(Screen.width * 0.05f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.05f), "<"))
 			{
 				LevelPage--;
 			}
@@ -111,10 +111,15 @@ public class Menus : MonoBehaviour
 		
 		if(LevelPage < NumberOfLevelPages)
 		{
-			if(GUI.Button (new Rect(Screen.width * 0.8f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.1f), ">"))
+			if(GUI.Button (new Rect(Screen.width * 0.85f, Screen.height * 0.85f, Screen.width * 0.1f, Screen.height * 0.05f), ">"))
 			{
 				LevelPage++;
 			}
+		}
+
+		if(GUI.Button(new Rect(Screen.width * 0.05f, Screen.height * 0.05f, Screen.width * 0.05f, Screen.height * 0.05f), "Back"))
+		{
+			Application.LoadLevel("Menu");
 		}
 	}
 	
