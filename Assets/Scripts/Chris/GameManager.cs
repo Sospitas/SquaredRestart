@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+
 public enum GameState
 {
 	MENU,
@@ -9,9 +13,22 @@ public enum GameState
 	NONE
 };
 
-public class GameManager : Singleton<GameManager>
+[System.Serializable]
+public class GameManager
 {
-	public static int numberOfLives;
+	private GameManager() {} // Private class constructor
+
+	static GameManager _instance = new GameManager();
+
+	public static GameManager Instance
+	{
+		get { return _instance; }
+	}
+
+
+	public int numberOfLives;
+
+	static public string saveFileName = "savegame";
 
 	private GameState _currentState = GameState.NONE;
 
@@ -35,9 +52,69 @@ public class GameManager : Singleton<GameManager>
 	// and the amount of virtual currency that the player has.
 	// It will not run at any point ever again unless the app is installed, as the value
 	// of hasPerformedInitialValueSet will be set to true;
-	void PerformInitialValueSet()
+	void InitFromSettings(GameSettings settings)
 	{
-    	numberOfLives = 5;
+		if(hasPerformedInitialValueSet)
+			return;
+
+    	numberOfLives = settings.startingLives;
+
+		// Disabled so that it can be reset while developing/testing
+//		hasPerformedInitialValueSet = true;
+	}
+
+	public static bool SaveGameState()
+	{
+		bool saveSucceeded = true;
+
+		string filename = Application.dataPath + "/" + saveFileName;
+		FileStream stream = new FileStream(filename, FileMode.Create);
+
+		try
+		{
+			BinaryFormatter serializer = new BinaryFormatter();
+			serializer.Serialize(stream, Instance);
+		}
+		catch(SerializationException e)
+		{
+			Debug.Log ("Serialization failed. Error: " + e.Message);
+			saveSucceeded = false;
+		}
+		finally
+		{
+			stream.Close();
+		}
+
+		return saveSucceeded;
+	}
+
+	static public bool LoadGameState()
+	{
+		bool loadSucceeded = false;
+
+		string filename = Application.dataPath + "/" + saveFileName;
+		if(File.Exists(filename))
+		{
+			loadSucceeded = true;
+			FileStream stream = File.Open(filename, FileMode.Open);
+
+			try
+			{
+				BinaryFormatter deserializer = new BinaryFormatter();
+				_instance = (GameManager)deserializer.Deserialize(stream);
+			}
+			catch(SerializationException e)
+			{
+				Debug.Log ("Deserialization failed. Error: " + e.Message);
+				loadSucceeded = false;
+			}
+			finally
+			{
+				stream.Close();
+			}
+		}
+
+		return loadSucceeded;
 	}
 
 	public void SetState(GameState newState)
