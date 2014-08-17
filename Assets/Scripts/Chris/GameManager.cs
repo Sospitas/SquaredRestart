@@ -25,8 +25,7 @@ public class GameManager
 		get { return _instance; }
 	}
 
-
-	public int numberOfLives;
+	public int currentLevel = 1;
 
 	static public string saveFileName = "savegame";
 
@@ -57,7 +56,7 @@ public class GameManager
 		if(hasPerformedInitialValueSet)
 			return;
 
-    	numberOfLives = settings.startingLives;
+		// Set variables from the settings file
 
 		// Disabled so that it can be reset while developing/testing
 //		hasPerformedInitialValueSet = true;
