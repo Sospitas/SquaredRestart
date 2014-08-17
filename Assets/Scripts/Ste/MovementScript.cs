@@ -8,6 +8,10 @@ public class MovementScript : MonoBehaviour
 	private Vector2 velocity;
     private Vector2 targetVel;
     private bool speedUp;
+
+	// CHRIS
+	private bool _isGrounded = false;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -84,29 +88,9 @@ public class MovementScript : MonoBehaviour
 
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
-			//This is a horrid code. There must be a better way of doing this. Unity...
-			Debug.Log("Space");
-			Vector2 dir;
-			Vector2 myPos;
-			if(Physics2D.gravity.y < 0)
+			if(IsGrounded())
 			{
-				dir = new Vector2(0.0f, -1.0f);
-				myPos = new Vector2(this.transform.position.x, this.transform.position.y - this.collider2D.bounds.extents.y -0.05f);
-			}
-			else 
-			{
-				dir = new Vector2(0.0f, 1.0f);
-				myPos = new Vector2(this.transform.position.x, this.transform.position.y + this.collider2D.bounds.extents.y + 0.05f);
-			}
-
-			RaycastHit2D hit = Physics2D.Raycast(myPos, dir - myPos, 0.1f);
-
-			if(hit != null && hit.collider != null)
-			{
-				if(hit.collider.gameObject.tag == "Floor")
-				{
-					Physics2D.gravity = -Physics2D.gravity;
-				}
+				SwitchGravity2D();
 			}
 		}
     }
@@ -141,5 +125,71 @@ public class MovementScript : MonoBehaviour
 			}
 		}
 		return false;
+	}
+
+	// CHRIS
+	bool IsGrounded()
+	{
+		RaycastHit2D hitLeft, hitRight;
+
+		// If gravity == down
+		if(Physics2D.gravity.y < 0)
+		{
+			hitLeft = Physics2D.Raycast(new Vector2(transform.position.x - transform.collider2D.bounds.extents.x, transform.position.y), -Vector2.up,
+			                            transform.collider2D.bounds.extents.y + 0.1f);
+			hitRight = Physics2D.Raycast(new Vector2(transform.position.x + transform.collider2D.bounds.extents.x, transform.position.y), -Vector2.up,
+			                             transform.collider2D.bounds.extents.y + 0.1f);
+
+			if(hitLeft)
+			{
+				Debug.Log ("Hit Left - Down");
+			}
+
+			if(hitRight)
+			{
+				Debug.Log ("Hit Right - Down");
+			}
+
+			if(hitLeft || hitRight)
+			{
+				return true;
+			}
+		}
+		else if(Physics2D.gravity.y > 0)
+		{
+			hitLeft = Physics2D.Raycast (new Vector2(transform.position.x - transform.collider2D.bounds.extents.x, transform.position.y), Vector2.up,
+			                             transform.collider2D.bounds.extents.y + 0.1f);
+			hitRight = Physics2D.Raycast (new Vector2(transform.position.x + transform.collider2D.bounds.extents.x, transform.position.y), Vector2.up,
+			                              transform.collider2D.bounds.extents.y + 0.1f);
+
+			if(hitLeft)
+			{
+				Debug.Log ("Hit Left - Up");
+			}
+			
+			if(hitRight)
+			{
+				Debug.Log ("Hit Right - Up");
+			}
+
+			if(hitLeft || hitRight)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	void SwitchGravity2D()
+	{
+		Physics2D.gravity = -Physics2D.gravity;
+	}
+
+	void OnGUI()
+	{
+		GUI.Label (new Rect(10, 10, 200, 100), Physics2D.gravity.y.ToString());
+
+		GUI.Label (new Rect(110, 10, 200, 100), this.rigidbody2D.velocity.y.ToString());
 	}
 }
