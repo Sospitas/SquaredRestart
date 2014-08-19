@@ -5,7 +5,8 @@ public class MovementScript : MonoBehaviour
 {
 
 	public Vector2 topVel;
-	private Vector2 velocity;
+    public float maxFallSpeed;
+    private Vector2 velocity;
     private Vector2 targetVel;
     private bool speedUp;
 
@@ -28,11 +29,12 @@ public class MovementScript : MonoBehaviour
     void LateUpdate()
     {
         UpdateMovement();
+        LimitFallVelocity();
     }
 
     void UpdateMovement()
     {
-        if (speedUp)
+        if(speedUp)
         {
             targetVel = new Vector2(velocity.x, this.rigidbody2D.velocity.y);
             this.rigidbody2D.velocity = Vector2.Lerp(this.rigidbody2D.velocity, targetVel, 120 * Time.deltaTime);
@@ -44,43 +46,49 @@ public class MovementScript : MonoBehaviour
         }
     }
 
+    void LimitFallVelocity()
+    {
+        if(this.rigidbody2D.velocity.y < -maxFallSpeed && Physics2D.gravity.y < 0)
+        {
+            this.rigidbody2D.velocity = new Vector2(this.rigidbody2D.velocity.x, -maxFallSpeed);
+        }
+        else if(this.rigidbody2D.velocity.y < maxFallSpeed && Physics2D.gravity.y > 0)
+        {
+            this.rigidbody2D.velocity = new Vector2(this.rigidbody2D.velocity.x, -maxFallSpeed);
+        }
+    }
+
 	void UpdateInputs()
 	{
         //These are the controls for PC
         //MoveRight
-        if (Input.GetKey(KeyCode.D))
+        if(Input.GetKey(KeyCode.D))
         {
-			if(!CheckForWalls(false))
-			{
-	            if (velocity.x < topVel.x)
-	            {
-	                velocity.x += 10 * Time.deltaTime;
-	                speedUp = true;
-	                if (velocity.x > topVel.x)
-	                {
-	                    velocity.x = topVel.x;
-	                }
-	            }
-			}
+            if(velocity.x < topVel.x)
+            {
+                velocity.x += 10 * Time.deltaTime;
+                speedUp = true;
+                if (velocity.x > topVel.x)
+                {
+                    velocity.x = topVel.x;
+                }
+            }
         }
         //Move Left
-        if (Input.GetKey(KeyCode.A))
+        if(Input.GetKey(KeyCode.A))
         {
-			if(!CheckForWalls(true))
-			{
-	            if (velocity.x > -topVel.x)
-	            {
-	                velocity.x -= 10 * Time.deltaTime;
-	                speedUp = true;
-	                if (velocity.x < -topVel.x)
-	                {
-	                    velocity.x = -topVel.x; 
-	                }
-	            }
-			}
+            if(velocity.x > -topVel.x)
+            {
+                velocity.x -= 10 * Time.deltaTime;
+                speedUp = true;
+                if (velocity.x < -topVel.x)
+                {
+                    velocity.x = -topVel.x; 
+                }
+            }
         }
         //Move the velocity back to 0.
-        if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+        if(Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
         {
             speedUp = false; 
             velocity.x = 0;
@@ -94,38 +102,6 @@ public class MovementScript : MonoBehaviour
 			}
 		}
     }
-
-	bool CheckForWalls(bool left)
-	{
-		Vector2 dir;
-		Vector2 myPos;
-
-		if(left)
-		{
-			dir = new Vector2(-1.0f, 0.0f);
-			myPos = new Vector2(this.transform.position.x - this.collider2D.bounds.extents.x -0.05f, this.transform.position.y);
-		}
-		else 
-		{
-			dir = new Vector2(1.0f, 0.0f);
-			myPos = new Vector2(this.transform.position.x + this.collider2D.bounds.extents.x +0.05f, this.transform.position.y);
-		}
-		
-		RaycastHit2D hit = Physics2D.Raycast(myPos, dir - myPos, 0.1f);
-		
-		if(hit != null && hit.collider != null)
-		{
-			if(hit.collider.gameObject.tag == "Wall")
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
-	}
 
 	// CHRIS
 	bool IsGrounded()
