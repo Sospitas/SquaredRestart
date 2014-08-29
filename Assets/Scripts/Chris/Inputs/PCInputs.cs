@@ -28,5 +28,10 @@ public class PCInputs : Inputs
 		{
 			base.FlipGravity();
 		}
+
+		if(Input.GetKeyDown (KeyCode.E))
+		{
+			base.EndLevel();
+		}
 	}
 }

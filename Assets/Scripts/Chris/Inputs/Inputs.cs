@@ -11,6 +11,8 @@ public class Inputs : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+//		_player = this.GetComponent<MovementScript>();
+
 		if(!_player)
 			_isInputLocked = true;
 	}
@@ -20,6 +22,8 @@ public class Inputs : MonoBehaviour
 	{
 		if(_isInputLocked)
 			return;
+
+
 	}
 
 	public void InputLeft()
@@ -34,11 +38,18 @@ public class Inputs : MonoBehaviour
 
 	public void FlipGravity()
 	{
-		_isGravityFlipped = !_isGravityFlipped;
+		if(_player._isGrounded)
+		{
+			_isGravityFlipped = !_isGravityFlipped;
+			_player.SwitchGravity2D();
+			_player._isGrounded = false;
+		}
 	}
 
 	public void EndLevel()
 	{
 		// Call the end level function
+		if(GameManager.Instance.loadNextLevel)
+			GameManager.Instance.LoadNextLevel();
 	}
 }
