@@ -27,6 +27,8 @@ public class GameManager
 
 	public int currentLevel = 1;
 
+    public bool loadNextLevel = false;
+
 	static public string saveFileName = "savegame";
 
 	private GameState _currentState = GameState.NONE;
@@ -43,6 +45,7 @@ public class GameManager
 			_currentState = value;
 		}
 	}
+
 
 	bool hasPerformedInitialValueSet = false;
 
@@ -151,4 +154,13 @@ public class GameManager
 			break;
 		}
 	}
+    //Ste Added this for loading the next level where we don't have to know what the level number is.
+    public void LoadNextLevel()
+    {
+        string thisLevel = Application.loadedLevelName;
+        string thisLevelNumber = thisLevel.Substring(5);
+        Debug.Log("Level Number: " + thisLevelNumber);
+        int thisLevelNum = System.Convert.ToInt32(thisLevelNumber);
+        Application.LoadLevel(thisLevelNum +1);
+    }
 }
